@@ -4,19 +4,50 @@ Updated 25 Nov 2026. All paper, code, and blog links were taken from the papers 
 or the founding essay, and the blog/community links were opened and checked on 25 Nov 2026.
 -->
 
-# Awesome Weight-Space Programming [![Awesome](https://awesome.re/badge.svg)](https://awesome.re)
 
-A curated list of research, code, and discussion on **Weight-Space Programming (WSP)**: a
-general-purpose large language model **reads, writes, or edits the raw weights of a neural
-network directly**, guided by a natural-language specification and *without* gradient-based
-training.
+# Awesome Weight-Space Programming (WSP)
 
-> The term was introduced by Takehi, Teoh, Zhang & Khattab (MIT CSAIL) in the essay
-> *"Sparks of Weight-Space Programming"* (2 Nov 2026). The authors describe WSP as "the name of
-> an emerging concept", not a method. Its three canonical operations are **Read**, **Write**,
-> and **Edit**.
+[![Awesome](https://awesome.re/badge.svg)](https://awesome.re)
+![Research Collection](https://img.shields.io/badge/collection-research-blue)
+![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen)
+![Last Updated](https://img.shields.io/badge/updated-November%202026-orange)
 
-**Legend:** 📄 paper · 💻 code · 🌐 project page · 📝 blog post · 🧪 replication · ⚠️ critique
+**A curated research hub for Weight-Space Programming (WSP): research papers, implementations, benchmarks, reproducibility studies, technical discussions, and emerging applications.**
+
+Weight-Space Programming explores how general-purpose Large Language Models (LLMs) can directly **read, write, and edit neural network weights** using natural-language specifications and programmatic tools, without conventional gradient-based training.
+
+This repository tracks the rapidly emerging WSP research ecosystem, from its introduction at MIT CSAIL to new approaches in neural network synthesis, model editing, capability installation, interpretability, verification, and scientific applications.
+
+Whether you are an **AI researcher, machine learning engineer, developer, graduate student, or someone exploring LLM-based neural network programming**, this collection is intended to help you discover relevant research and reproduce experiments.
+
+## Start Here
+
+- 📖 [Foundational Work: Sparks of Weight-Space Programming](https://rikiyat.github.io/blog/weight-space-programming/)
+- 📚 [Research Papers and Surveys](#surveys)
+- 🧪 [Benchmarks and Evaluations](#benchmarks--evaluation)
+- 💻 [Open-Source Implementations](#replications--reproductions)
+- 🧠 [Technical Approaches and Applications](#reading--auditing-weights)
+- 🔬 [Related Research and Foundations](#background-related-lines-of-work)
+- 🤝 [Contribute Research or Implementations](#contributing)
+
+## What is Weight-Space Programming?
+
+Weight-Space Programming (WSP) is an emerging paradigm introduced by Rikiya Takehi, Jayden Teoh, Alex Zhang, and Omar Khattab at MIT CSAIL in November 2026.
+
+It investigates whether LLMs can operate directly on neural network parameters as programmable objects.
+
+The three core operations are:
+
+- **Read:** Interpret existing neural network weights and infer their learned behavior.
+- **Write:** Construct neural network weights from scratch based on a specification.
+- **Edit:** Modify existing weights to change, repair, or extend model behavior.
+
+Unlike conventional neural network training, WSP explores gradient-free, LLM-directed parameter construction and modification.
+
+This collection distinguishes direct WSP research from related historical approaches such as hypernetworks, model merging, fast-weight programming, and conventional model editing.
+
+---
+
 
 ## Contents
 - [Surveys](#surveys)
@@ -46,6 +77,19 @@ training.
 - **[WeightBench: Evaluating Language Models as Weight-Space Programmers](https://arxiv.org/abs/2611.18553)**: *Aayush Marasini, Barsat Khadka, Nick Rahimi (U. Southern Mississippi)*. 42 tasks in 5 tracks (read, fix, write, impossible-edit recognition, data-free compression) on networks of 2K–7B parameters. Agents run in an OS-level sandbox with a metered NumPy and a hash-chained ledger. Claude Opus 5.5 reaches a macro score of 0.535. [[💻 code](https://github.com/Aayush-Marasini/WeightBench)]
 - **[IWIBench: Evaluating Gradient-Free Model Driven Intra-weight Injection](https://arxiv.org/abs/2611.08647)**: *Chris von Csefalvay, Pranav Doma, Achyuthan Unni Krishnan, Tamás Földi*, 5 Nov 2026. Measures how well LLM "editors" modify the weights of a smaller target model (typically Gemma 3 4B IT) to meet ten text-editing objectives.
 - **[Exploring Weight-Space Programming: Capabilities, Generalization, and Limitations](https://arxiv.org/abs/2611.09382)**: *Junru Hu et al. (Shanghai AI Laboratory, Tongji, Fudan)*. 16 editing trajectories over 7 benchmarks on Qwen3.5-0.8B and 9B. On the 0.8B model, gains reach +36.7 points, and a 1,023-parameter edit gives +29.5 on MATH-500. The 9B model gains little, and 6 of 16 trajectories keep the original weights. [[🌐 homepage](https://wsp-scope.github.io/)] [[💻 code](https://github.com/WSP-Scope/WSP-Scope-Project)]
+
+## Open-Source Implementations and Tools
+
+A collection of codebases, experimental implementations, and tools
+for reproducing and extending Weight-Space Programming research.
+
+| Project | Description | Framework / Tools |
+|---|---|---|
+| [WeightBench](https://github.com/Aayush-Marasini/WeightBench) | WSP evaluation benchmark | Python |
+| [WeightCode](https://github.com/Gen-Verse/WeightCode) | Reusable weight-program installation | See repository |
+| [WeightLoop](https://github.com/limengran98/WeightLoop) | Experimental-feedback-driven weight editing | See repository |
+| [WSP-Scope](https://github.com/WSP-Scope/WSP-Scope-Project) | WSP experiments and evaluations | See repository |
+| [Quantum WSP](https://github.com/DebarshiKunduPSU/Quantum-Weight-Space-Programming) | Weight programming for quantum circuits | See repository |
 
 ## Reading & Auditing Weights
 - **[Weight-Space Programming for Auditing Clinical Decision Networks](https://arxiv.org/abs/2611.05341)**: *Humza Nusrat, Omar Nusrat (Henry Ford Health, Michigan State, Toronto Metropolitan)*. Claude Opus 5.5 audits radiotherapy decision networks (433–4,801 parameters) blind. It names the broken rule in 16 of 18 flawed networks and repairs each by a median of 3 parameters, but it cannot certify that a network is correct. [[💻 code](https://github.com/hnusrat1/weightspace-rt)]
@@ -123,6 +167,21 @@ WSP is defined against these older ideas, so they are useful context. They are *
 | WeightCode | [2611.25476](https://arxiv.org/abs/2611.25476) | E/W | Seq2seq, ViT, ImageNet | [code](https://github.com/Gen-Verse/WeightCode) |
 
 <sub>Op. = dominant operation: R = read/audit, W = write from scratch, E = edit/repair. Sorted by arXiv ID. Last updated 25 Nov 2026.</sub>
+
+## Open Research Challenges
+
+Important research directions in Weight-Space Programming include:
+
+- **Scalability:** Extending weight-space programming to larger neural networks and foundation models.
+- **Reliability:** Evaluating whether weight modifications are reproducible and semantically meaningful.
+- **Compositionality:** Combining independently developed weight programs.
+- **Interpretability:** Understanding how LLMs reason about neural network parameters.
+- **Verification and Safety:** Ensuring weight modifications preserve required model properties.
+- **Benchmarking:** Developing standardized evaluations for reading, writing, and editing weights.
+- **Applications:** Exploring WSP in robotics, scientific machine learning, vision-language models, and autonomous systems.
+
+Contributions investigating these challenges are welcome.
+
 
 ## Contributing
 Pull requests are welcome. To add an entry, include:
