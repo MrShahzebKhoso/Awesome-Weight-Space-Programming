@@ -1,216 +1,133 @@
+<!--
+Ready-to-paste README for https://github.com/MrShahzebKhoso/Awesome-Weight-Space-Programming
+Updated 25 Nov 2026. All paper, code, and blog links were taken from the papers themselves
+or the founding essay, and the blog/community links were opened and checked on 25 Nov 2026.
+-->
+
 # Awesome Weight-Space Programming [![Awesome](https://awesome.re/badge.svg)](https://awesome.re)
 
-> A curated list of papers, code, benchmarks, reproductions and discussion on **Weight-Space Programming (WSP)**: language models that read, edit and write the weights of neural networks directly, by reasoning rather than through gradient descent.
+A curated list of research, code, and discussion on **Weight-Space Programming (WSP)**: a
+general-purpose large language model **reads, writes, or edits the raw weights of a neural
+network directly**, guided by a natural-language specification and *without* gradient-based
+training.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/papers-20%2B-blue" alt="papers">
-  <img src="https://img.shields.io/badge/field%20born-Nov%202026-orange" alt="since">
-  <img src="https://img.shields.io/badge/PRs-welcome-brightgreen" alt="PRs welcome">
-  <img src="https://img.shields.io/badge/license-CC0-lightgrey" alt="license">
-</p>
+> The term was introduced by Takehi, Teoh, Zhang & Khattab (MIT CSAIL) in the essay
+> *"Sparks of Weight-Space Programming"* (2 Nov 2026). The authors describe WSP as "the name of
+> an emerging concept", not a method. Its three canonical operations are **Read**, **Write**,
+> and **Edit**.
 
----
-
-## What is Weight-Space Programming?
-
-The term was introduced by Rikiya Takehi, Jayden Teoh, Alex Zhang and Omar Khattab (MIT CSAIL) on **2 November 2026** in the blog post *Sparks of Weight-Space Programming*. They define it as a setup in which:
-
-> a general-purpose LLM reads and writes a network's weights directly (i.e., not through an optimizer, and in particular not with gradient descent).
-
-The working idea is that **weights are a program**. A model looks at raw parameters, works out what each part computes or should compute, and changes the numbers on purpose, the way an engineer edits source code.
-
-```
-        ┌──────────────────────┐   natural-language goal
-        │   "Editor" LLM       │◀── "stop this model looping",
-        │  (GPT-6 Astra, Qwen, │    "write a Breakout policy"
-        │   Claude, Kimi, …)   │
-        └─────────┬────────────┘
-     read │       │ write / edit (no optimizer)
-          ▼       ▼
-        ┌──────────────────────┐
-        │   Target network θ   │  game policy · CNN · ViT · LLM · diffusion U-Net
-        └──────────────────────┘
-```
-
-WSP sits where three older fields meet: **weight-space learning** (networks as a data modality), **mechanistic interpretability** (understanding what weights compute) and **model editing** (targeted changes to parameters). See [Foundations & Related Fields](#foundations--related-fields).
-
----
+**Legend:** 📄 paper · 💻 code · 🌐 project page · 📝 blog post · 🧪 replication · ⚠️ critique
 
 ## Contents
-
-- [The Origin](#the-origin)
-- [Papers](#papers)
-  - [Capabilities & Critical Analysis](#capabilities--critical-analysis)
-  - [Benchmarks](#benchmarks)
-  - [Writing Networks from Scratch](#writing-networks-from-scratch)
-  - [Editing & Improving Language Models](#editing--improving-language-models)
-  - [Vision & Diffusion Models](#vision--diffusion-models)
-  - [Science & Domain Applications](#science--domain-applications)
-  - [Verification & Interpretability](#verification--interpretability)
-- [Code, Models & Demos](#code-models--demos)
-- [Reproductions & Critiques](#reproductions--critiques)
-- [Explainers & Press](#explainers--press)
-- [Foundations & Related Fields](#foundations--related-fields)
-- [Open Problems](#open-problems)
+- [Surveys](#surveys)
+- [Foundational Work](#foundational-work)
+- [Benchmarks & Evaluation](#benchmarks--evaluation)
+- [Reading & Auditing Weights](#reading--auditing-weights)
+- [Writing Weights from Scratch](#writing-weights-from-scratch)
+- [Editing, Repair & Capability Installation](#editing-repair--capability-installation)
+- [Systems, Runtimes & Verification](#systems-runtimes--verification)
+- [Critical Perspectives](#critical-perspectives)
+- [Replications & Reproductions](#replications--reproductions)
+- [Community Extensions (Blogs & Code)](#community-extensions-blogs--code)
+- [Commentary & Critiques](#commentary--critiques)
+- [Background: Related Lines of Work](#background-related-lines-of-work)
+- [Summary Table](#summary-table)
 - [Contributing](#contributing)
 
 ---
 
-## The Origin
+## Surveys
+- **Weight-Space Programming: An Early Review of an Emerging Paradigm for Gradient-Free Neural Network Synthesis, Editing, and Auditing**: *Shahzeb Khoso (NUST)*, Nov 2026. A scoping review of the first 15 arXiv studies, covering a read/write/edit taxonomy, a quality appraisal, cross-cutting findings, and open problems. *(Preprint link coming soon.)*
 
-- **Sparks of Weight-Space Programming: LLMs can natively read & write neural network weights**: Takehi, Teoh, Zhang, Khattab (MIT CSAIL), Nov 2026. [[blog]](https://rikiyat.github.io/blog/weight-space-programming/) [[logs]](https://github.com/RikiyaT/lm_understand-logs)
-  - **Read:** from 17,253 raw weights and no tools, GPT-6 Astra identified a game-playing policy as Breakout.
-  - **Fix:** a single edit to about 3.5% of a PPO policy's weights raised its success on a car level from 0% to 100%.
-  - **Improve:** an edit to 0.016% of Qwen3.5-0.8B's weights, which suppressed a thinking-loop direction, raised MATH-500 from 7.9% to 48.1%.
-  - **Write:** networks written from scratch, with no environment feedback, that the authors report outplay PPO policies trained for 100M steps.
-  - **Failures:** sycophancy in a language model could not be detected from the weights alone.
+## Foundational Work
+- **[Sparks of Weight-Space Programming: LLMs can natively read & write neural network weights](https://rikiyat.github.io/blog/weight-space-programming/)**: *Rikiya Takehi, Jayden Teoh, Alex Zhang, Omar Khattab (MIT CSAIL)*, 2 Nov 2026. The essay that named the field. GPT-6 Astra reads, edits, and writes weights. Editing could unmask a hidden ability but not add a missing one. A "Response to Comments" section was added on 12 Nov. [[💻 logs](https://github.com/RikiyaT/lm_understand-logs)] [[🤗 edited model](https://huggingface.co/RikiyaT/Qwen3.5-0.8B-weight-space-programming)] [[demo](https://huggingface.co/spaces/akhaliq/weight-space-programming-demo)]
 
----
+## Benchmarks & Evaluation
+- **[WeightBench: Evaluating Language Models as Weight-Space Programmers](https://arxiv.org/abs/2611.18553)**: *Aayush Marasini, Barsat Khadka, Nick Rahimi (U. Southern Mississippi)*. 42 tasks in 5 tracks (read, fix, write, impossible-edit recognition, data-free compression) on networks of 2K–7B parameters. Agents run in an OS-level sandbox with a metered NumPy and a hash-chained ledger. Claude Opus 5.5 reaches a macro score of 0.535. [[💻 code](https://github.com/Aayush-Marasini/WeightBench)]
+- **[IWIBench: Evaluating Gradient-Free Model Driven Intra-weight Injection](https://arxiv.org/abs/2611.08647)**: *Chris von Csefalvay, Pranav Doma, Achyuthan Unni Krishnan, Tamás Földi*, 5 Nov 2026. Measures how well LLM "editors" modify the weights of a smaller target model (typically Gemma 3 4B IT) to meet ten text-editing objectives.
+- **[Exploring Weight-Space Programming: Capabilities, Generalization, and Limitations](https://arxiv.org/abs/2611.09382)**: *Junru Hu et al. (Shanghai AI Laboratory, Tongji, Fudan)*. 16 editing trajectories over 7 benchmarks on Qwen3.5-0.8B and 9B. On the 0.8B model, gains reach +36.7 points, and a 1,023-parameter edit gives +29.5 on MATH-500. The 9B model gains little, and 6 of 16 trajectories keep the original weights. [[🌐 homepage](https://wsp-scope.github.io/)] [[💻 code](https://github.com/WSP-Scope/WSP-Scope-Project)]
 
-## Papers
+## Reading & Auditing Weights
+- **[Weight-Space Programming for Auditing Clinical Decision Networks](https://arxiv.org/abs/2611.05341)**: *Humza Nusrat, Omar Nusrat (Henry Ford Health, Michigan State, Toronto Metropolitan)*. Claude Opus 5.5 audits radiotherapy decision networks (433–4,801 parameters) blind. It names the broken rule in 16 of 18 flawed networks and repairs each by a median of 3 parameters, but it cannot certify that a network is correct. [[💻 code](https://github.com/hnusrat1/weightspace-rt)]
 
-> All entries are arXiv preprints from November 2026 unless noted. Listed newest-first within each section.
+## Writing Weights from Scratch
+- **[Weight-Space Programming for Medical Imaging: Do We Still Need Training Data?](https://arxiv.org/abs/2611.12066)**: *Maximilian Lindholz et al. (Charité – Universitätsmedizin Berlin, BIH, et al.)*. LLMs write LeNet-style CNN weights without seeing any images. They are above chance on all six MedMNIST tasks (mean AUC 0.72), but Adam trained on 256 labels still wins (0.83). [[💻 code](https://github.com/MaximilianLindholz/weight-space-programming-medical)]
+- **[Weight-Space Programming for Materials Science](https://arxiv.org/abs/2611.22013)**: *Sk Md Ahnaf Akif Alvi, Raymundo Arróyave (Texas A&M)*. LLM-written networks rank candidates with zero labels (alloys ρ = 0.64–0.79) and serve as Gaussian-process prior means. They help most in the first tens of labels. [[💻 code](https://github.com/sheikhahnaf/weightspace-programming-for-material-science)]
+- **[Mixed Signals: Weight-Space Programming for EEG and ECG](https://arxiv.org/abs/2611.13758)**: *Dara Varam, Taraneh Aminosharieh Najafi, David Atienza (EPFL ESL)*. Written biosignal networks match gradient descent with 6× fewer training subjects. The LLMs cannot improve already well-trained networks. [[🌐 project](https://daravaram.github.io/BioWSP)]
+- **[Weight-Space Programming of Variational Quantum Circuits](https://arxiv.org/abs/2611.11537)**: *Debarshi Kundu, Swaroop Ghosh, Vasant Honavar (Penn State)*. The LLM writes circuit angles without an optimizer: 95–100% of the VQE spectrum and the exact H₂ ground state in closed form. Accuracy falls to chance once a circuit passes 30 opaque weights. [[💻 code](https://github.com/DebarshiKunduPSU/Quantum-Weight-Space-Programming)]
+- **[Weight-Space Programming of Policies and Their Verification via Model Checking](https://arxiv.org/abs/2611.11604)**: *Dennis Gross (artigo.ai)*. DeepSeek-V4-Pro and Kimi-K3.1-Pro write RL policy weights, which are verified against PCTL requirements with Storm/COOL-MC. All 18 created policies reach the optimal probability. [[💻 code](https://github.com/LAVA-LAB/COOL-MC/tree/wsp_verified)]
+- **[Weight-Space Programming Doesn't Need Transformers](https://arxiv.org/abs/2611.22055)**: *Hyunjong Ok, Jaeho Lee (POSTECH)*. Free to design their own models, LLMs write sparse associative tables, reaching up to 54.4% on ARC with about 1,800× fewer parameters than their best written Transformer. [[🌐 project](https://wsp-no-transformer.github.io)] [[💻 code](https://github.com/effl-lab/Weight-Space-Programming)]
+- **[Interpretable weight-space programming builds transparent transformers and brain encoding models](https://arxiv.org/abs/2611.18114)**: *Yash Mehta, Chandan Singh, Weijia Xu, Richard J. Antonello, Adeen Flinker, Nima Mesgarani, Michael F. Bonner, Nebojsa Jojic, Jianfeng Gao*, 13 Nov 2026. An LLM agent builds interpretable models (transformers and brain encoding models) by writing their weights and features in code, without backpropagation. [[💻 code](https://github.com/csinva/weight-space-programming-autoresearch)] [[📝 report](https://csinva.io/weight-space-programming-autoresearch/analyze/toy_examples/report.html)]
 
-### Capabilities & Critical Analysis
+## Editing, Repair & Capability Installation
+- **[WeightCode: Installing New Capabilities into Neural Networks via Weight-Space Programming](https://arxiv.org/abs/2611.25476)**: *Bo Li et al. (U. Macau, NUS, CUHK, Oxford, Stanford, Peking, …)*. A frozen LLM writes executable "weight programs" that install new computations. Rerun on 5 independently trained ViTs with no further LLM calls, the programs keep 83–110% of their gains. [[💻 code](https://github.com/Gen-Verse/WeightCode)]
+- **[WeightLoop: Weight-Space Programming with Experimental Feedback](https://arxiv.org/abs/2611.07319)**: *Mengran Li et al. (HKISI, U. Macau, UBC, Westlake, …)*. Turns experimental measurements into persistent, validated weight edits, cutting error on scientific predictors by 5.1–18.6%. [[💻 code](https://github.com/limengran98/WeightLoop)]
+- **[Can Weight-Space Programming Alter Learned Ethical Priorities?](https://arxiv.org/abs/2611.24330)**: *Kai Yi Ji*. A weight edit shifts how concept-supervised text readers trade honouring a pledge against benefiting more people. Exploratory work with an alignment angle. [[💻 code](https://github.com/kaiji123/wsp-safety)]
 
-- **Exploring Weight-Space Programming: Capabilities, Generalization, and Limitations**. [[arXiv 2611.09382]](https://arxiv.org/abs/2611.09382)
-  Edits learned on math transfer to GPQA Diamond, IFEval and SciBench. Results vary widely across trajectories, and 6 of 16 runs keep the original weights because no candidate edit could be validated.
-- **Can an LLM Actually Reason and Program about Neural Network's Weights or is it just memorization on steroids?** Nazmus Sakib Ahmed. [[arXiv 2611.08070]](https://arxiv.org/abs/2611.08070)
-  Finds zero-shot weight reading is better described as "local arithmetic plus priors" than as tracing how weights compute.
-- **Compiling Known Rules into Compact Neural Agents: Weight-Space Programming on Unseen Games**. Jens Lehmann. [[arXiv 2611.16981]](https://arxiv.org/abs/2611.16981)
-  WSP networks turn out to be "programs in network form": 93% of parameters are exactly zero. Plain Python programs written by the same LLMs beat the networks they write.
+## Systems, Runtimes & Verification
+- **[W-ISA: Transactional Execution of Weight-Space Intervention Programs](https://arxiv.org/abs/2611.13232)**: *Ekrem Aksoy*. A shape-checked instruction set and transactional runtime that applies, measures, and rolls back weight interventions. Its edits match PyTorch hooks to within 1.84×10⁻⁴ logit difference.
 
-### Benchmarks
+## Critical Perspectives
+- **[Can an LLM Actually Reason and Program about Neural Network's Weights or is it just Memorization on Steroids?](https://arxiv.org/abs/2611.08070)** ⚠️: *Nazmus Sakib Ahmed (BRAC University)*. Argues that zero-shot weight *reading* is "local arithmetic plus dataset priors", not weight-flow tracing. Proposes a label-permutation and forward-pass auditing protocol. [[📝 blog version](https://sakibbai.com/posts/2026-11-05-llm-weight-space-programming/)]
+- **[Weight-Space Programming for Vision–Language Model Repair](https://arxiv.org/abs/2611.23615)** ⚠️: *Avinash Goutham Aluguvelly (UT Austin)*. Shows that planted-fault repairs can depend on numeric traces (low-order bits) rather than understanding. Recommends reporting the weight number format and including a rounded control.
 
-- **WeightBench: Evaluating Language Models as Weight-Space Programmers**. [[arXiv 2611.18553]](https://arxiv.org/abs/2611.18553)
-  Benchmark of 42 tasks in five tracks: reading, fixing, writing, spotting impossible edits, and data-free compression. Targets range from 2K-parameter policies to 7B-parameter LLMs, with budgeted agent access.
-- **Training Vision Models for LLM-Driven Weight-Space Programming**. [[arXiv 2611.26408]](https://arxiv.org/abs/2611.26408)
-  A vision WSP benchmark in which five LLMs edit CNNs and ViTs on Waterbirds, CIFAR-100, PACS and Entity-30. It releases more than 75,000 logged tool calls.
-- **Zero-Shot Weight-Space Programming Across a Difficulty-Graded Ladder of Two-Player Games**. [[arXiv 2611.09271]](https://arxiv.org/abs/2611.09271)
-  Gives a formal definition of a "weight-space programmed" network and builds a ladder of ten networks from reusable gate primitives.
+## Replications & Reproductions
+- 🧪 **[Qwen 3.8 27B on my laptop can interpret model weights, too](https://simonwillison.net/2026/Nov/3/qwen-can-interpret-model-weights/)**: *Simon Willison*, 3 Nov 2026. A local open-weight model identifies Atari games from raw policy weights using a prompt from the Sparks essay.
+- 🧪 **[MatinKhajavi/Weight-Space-Programming](https://github.com/MatinKhajavi/Weight-Space-Programming)**: *Matin Khajavi*. Replicates the eight Sparks experiments with Claude Opus 5.5 and Claude Fable 5.1 instead of GPT-6 Astra.
+- 🧪 **[statsleelab/weight_space_programming](https://github.com/statsleelab/weight_space_programming)**: Pure NumPy/SciPy reproduction of all eight Sparks experiments, with a bilingual (EN/KO) interactive guide.
 
-### Writing Networks from Scratch
+## Community Extensions (Blogs & Code)
+- 📝 **[We Asked Opus-5.5 to Edit π0.5's Weights. AutoResearch Made It Happen.](https://cuzyoung.github.io/robotics-weight-editing/en/)**: *Ziyang Gong et al.* Edits a π0.5 vision-language-action robot policy and reports faster real-robot bottle placement at unchanged success.
+- 📝 **[Can Opus 5.5 teach an image model what "no" means?](https://sabhyachhabria.com/writing/weight-space-negation/)** *(work in progress)*: *Sabhya Chhabria*, 2 Nov 2026. Edits about 0.02% of Stable Diffusion 3.5 Medium's text-encoder weights to reduce negated objects appearing in images.
+- 📝 **[Piano to flute, one weight edit](https://manaskarra.com/blog/magenta-wsp)**: *Manas Karra*, 8 Nov 2026. A single matrix edit to Magenta RealTime's style adapter turns a piano prompt into flute. Judged by the author's own listening.
+- 💻 **[brunicardoso/weight-space-programming-genomics](https://github.com/brunicardoso/weight-space-programming-genomics)**: A preregistered, blinded test of whether an LLM agent can detect and repair a planted shortcut in a genomics CNN. Detection was narrowly supported; repair was not.
 
-- **Physics2Weight: Direct Neural Network Architecture and Weight Generation from Physical Laws Using LLMs**. [[arXiv 2611.12954]](https://arxiv.org/abs/2611.12954)
-  The LLM generates both the architecture and the weights from physical laws, then refines them using forward-pass feedback.
-- **Weight-Space Programming of Policies and Their Verification via Model Checking**. [[arXiv 2611.11604]](https://arxiv.org/abs/2611.11604)
-  Programmed policies hit the optimal probability in all 18 runs and are checked with the Storm model checker, including PCTL safety specs.
+## Commentary & Critiques
+- ⚠️ **[LLMs are not superhuman at reading and writing neural network weights](https://www.seangoedecke.com/llms-are-not-superhuman-at-reading-and-writing-neural-network-weights/)**: *Sean Goedecke*, 3 Nov 2026. Argues that a skilled ML researcher could do the essay's reading tasks and its Qwen fix.
+- ⚠️ **[The "Astra can read and write weights to improve Qwen" post is misleading](https://honnibal.dev/blog/astra-read-write-misleading)**: *Matthew Honnibal*, 3 Nov 2026. Argues the essay blurs tool-free reading of raw weights with experiments that use Python or run the network.
 
-### Editing & Improving Language Models
+## Background: Related Lines of Work
+WSP is defined against these older ideas, so they are useful context. They are **not** WSP themselves.
 
-- **Writing Weights or Training Them? Spatial Reasoning through Weight-Space Programming and Low-Rank Adaptation**. Yalin Yang et al. [[arXiv 2611.27089]](https://arxiv.org/abs/2611.27089)
-  Compares WSP head-to-head with LoRA fine-tuning.
-- **Weight-Space Programming Writes In-Context Learning and Matches Fine-Tuning in Language Models**. Konstantinos Skianis, Aristidis Likas. [[arXiv 2611.26841]](https://arxiv.org/abs/2611.26841)
-  Turns in-context examples into a weight update for a weaker LM.
-- **WeightCode: Installing New Capabilities into Neural Networks via Weight-Space Programming**. Bo Li et al. [[arXiv 2611.25476]](https://arxiv.org/abs/2611.25476)
-  A frozen LLM writes executable "weight programs" that add new computations to trained networks. On ImageNet these give net gains of 8.84 to 17.62 points.
-
-### Vision & Diffusion Models
-
-- **Perceptual Weight Space Programming for Diffusion Super-Resolution**. [[arXiv 2611.18690]](https://arxiv.org/abs/2611.18690)
-  Edits under 0.1% of the U-Net parameters, spread over at most three layers, of ResShift, SinSR and SUPIR. Compares GPT-6 Astra with Qwen3-VL.
-- **WSP for Improving Image-Restoration Diffusion Models: Technical Conjectures and a Recursive Improvement Loop**. Zhuoran Zheng, Doubao. [[arXiv 2611.04268]](https://arxiv.org/abs/2611.04268)
-  A conjecture paper that proposes a benchmark for applying WSP to deblurring, super-resolution, denoising and inpainting.
-
-### Science & Domain Applications
-
-- **Weight-space programming and mechanistic interpretability for model editing in particle physics**. Bonnet-Guerrini, Ioannou-Nikolaides, Petersen. [[arXiv 2611.27079]](https://arxiv.org/abs/2611.27079)
-  Uses WSP together with SAE-guided edits to remove unwanted behaviour from a particle-physics foundation model.
-- **Mixed Signals: Weight-Space Programming for EEG and ECG**. Varam, Aminosharieh Najafi, Atienza (EPFL). [[arXiv 2611.13758]](https://arxiv.org/abs/2611.13758) [[site]](https://daravaram.github.io/BioWSP)
-  Finds and fixes planted faults in biosignal models. Networks written from scratch beat classic hand-crafted EEG pipelines.
-- **WeightLoop: Weight-Space Programming with Experimental Feedback**. Mengran Li et al. [[arXiv 2611.07319]](https://arxiv.org/abs/2611.07319)
-  A reusable WSP editor that turns lab measurements into lasting updates to scientific predictors.
-
-### Verification & Interpretability
-
-- **Interpretable weight-space programming builds transparent transformers and brain encoding models**. [[arXiv 2611.18114]](https://arxiv.org/abs/2611.18114)
-  Introduces iWSP, in which an agent builds interpretable models by programming their weights and features in code.
-- See also *Policies + Model Checking* [(2611.11604)](https://arxiv.org/abs/2611.11604) and *Particle physics* [(2611.27079)](https://arxiv.org/abs/2611.27079) above.
+- **Weights as programs:** [Software 2.0](https://karpathy.medium.com/software-2-0-a64152b37c35) (Karpathy, 2017).
+- **Program-to-weight compilers:** [Tracr: Compiled Transformers as a Laboratory for Interpretability](https://arxiv.org/abs/2301.05062) (Lindner et al., NeurIPS 2023).
+- **Networks that generate weights:** [HyperNetworks](https://arxiv.org/abs/1609.09106) (Ha et al., ICLR 2017); [Neural Network Diffusion](https://arxiv.org/abs/2402.13144) (Wang et al., 2024).
+- **Fast-weight programmers:** [Learning to Control Fast-Weight Memories](https://doi.org/10.1162/neco.1992.4.1.131) (Schmidhuber, Neural Computation 1992); [Linear Transformers Are Secretly Fast Weight Programmers](https://arxiv.org/abs/2102.11174) (Schlag et al., ICML 2021).
+- **Weight-space learning:** [Equivariant Architectures for Learning in Deep Weight Spaces](https://arxiv.org/abs/2301.12780) (Navon et al., ICML 2023); [Permutation Equivariant Neural Functionals](https://arxiv.org/abs/2302.14040) (Zhou et al., NeurIPS 2023).
+- **Algorithmic model editing:** [ROME](https://arxiv.org/abs/2202.05262) (Meng et al., NeurIPS 2022); [MEMIT](https://arxiv.org/abs/2210.07229) (Meng et al., ICLR 2023); [Editing Models with Task Arithmetic](https://arxiv.org/abs/2212.04089) (Ilharco et al., ICLR 2023); [Steering Language Models With Activation Engineering](https://arxiv.org/abs/2308.10248) (Turner et al., 2023).
+- **Mechanistic interpretability:** [A Mathematical Framework for Transformer Circuits](https://transformer-circuits.pub/2021/framework/index.html) (Elhage et al., 2021).
 
 ---
 
-## Code, Models & Demos
+## Summary Table
 
-| Resource | What it is |
-|---|---|
-| [RikiyaT/lm_understand-logs](https://github.com/RikiyaT/lm_understand-logs) | Prompts, responses, code and evaluations from the original *Sparks* post |
-| [RikiyaT/Qwen3.5-0.8B-weight-space-programming](https://huggingface.co/RikiyaT/Qwen3.5-0.8B-weight-space-programming) | Rebuilt Qwen3.5-0.8B checkpoint carrying the Astra edit |
-| [akhaliq/weight-space-programming-demo](https://huggingface.co/spaces/akhaliq/weight-space-programming-demo) | Hugging Face Space for comparing the base and edited models |
-| [BioWSP](https://daravaram.github.io/BioWSP) | Project page for WSP on EEG/ECG models |
+| Paper | arXiv | Op. | Domain | Code |
+|---|---|---|---|---|
+| Sparks of WSP (founding) | blog | R/W/E | RL, diffusion, LLMs | [logs](https://github.com/RikiyaT/lm_understand-logs) |
+| Clinical Auditing | [2611.05341](https://arxiv.org/abs/2611.05341) | R/E | Clinical decision nets | [code](https://github.com/hnusrat1/weightspace-rt) |
+| WeightLoop | [2611.07319](https://arxiv.org/abs/2611.07319) | E | Scientific predictors | [code](https://github.com/limengran98/WeightLoop) |
+| Reasoning vs. Memorization | [2611.08070](https://arxiv.org/abs/2611.08070) | R | CNNs (critique) | [blog](https://sakibbai.com/posts/2026-11-05-llm-weight-space-programming/) |
+| IWIBench | [2611.08647](https://arxiv.org/abs/2611.08647) | E | LLM editors → Gemma 3 4B | — |
+| Exploring WSP | [2611.09382](https://arxiv.org/abs/2611.09382) | E | Qwen3.5 0.8B/9B | [code](https://github.com/WSP-Scope/WSP-Scope-Project) |
+| Quantum VQC | [2611.11537](https://arxiv.org/abs/2611.11537) | W | Quantum circuits | [code](https://github.com/DebarshiKunduPSU/Quantum-Weight-Space-Programming) |
+| Policies + Model Checking | [2611.11604](https://arxiv.org/abs/2611.11604) | W/E | Verified RL | [code](https://github.com/LAVA-LAB/COOL-MC/tree/wsp_verified) |
+| Medical Imaging | [2611.12066](https://arxiv.org/abs/2611.12066) | W | CNNs, 4 modalities | [code](https://github.com/MaximilianLindholz/weight-space-programming-medical) |
+| W-ISA | [2611.13232](https://arxiv.org/abs/2611.13232) | E | LLM runtime | — |
+| EEG/ECG | [2611.13758](https://arxiv.org/abs/2611.13758) | W/E | Biosignals | [site](https://daravaram.github.io/BioWSP) |
+| Interpretable WSP (iWSP) | [2611.18114](https://arxiv.org/abs/2611.18114) | W | Transformers, brain encoding | [code](https://github.com/csinva/weight-space-programming-autoresearch) |
+| WeightBench | [2611.18553](https://arxiv.org/abs/2611.18553) | R/W/E | 2K–7B nets | [code](https://github.com/Aayush-Marasini/WeightBench) |
+| Materials Science | [2611.22013](https://arxiv.org/abs/2611.22013) | W | Property predictors | [code](https://github.com/sheikhahnaf/weightspace-programming-for-material-science) |
+| No-Transformer | [2611.22055](https://arxiv.org/abs/2611.22055) | W | LLM-designed arch. | [code](https://github.com/effl-lab/Weight-Space-Programming) |
+| VLM Repair | [2611.23615](https://arxiv.org/abs/2611.23615) | R/E | VLMs (critique) | — |
+| Ethical Priorities | [2611.24330](https://arxiv.org/abs/2611.24330) | E | Text readers | [code](https://github.com/kaiji123/wsp-safety) |
+| WeightCode | [2611.25476](https://arxiv.org/abs/2611.25476) | E/W | Seq2seq, ViT, ImageNet | [code](https://github.com/Gen-Verse/WeightCode) |
 
----
-
-## Reproductions & Critiques
-
-Independent checks of the claims belong in this section.
-
-- **Qwen 3.8 27B on my laptop can interpret model weights, too**: Simon Willison, 3 Nov 2026. [[post]](https://simonwillison.net/2026/Nov/3/qwen-can-interpret-model-weights/)
-  Reruns the no-tools reading task with a local quantized model, which named 3 of the 4 games after 45 to 65 minutes of reasoning each. Willison argues a patient human with pencil and paper could probably do the same.
-- **The "Astra can read and write weights to improve Qwen" post is massively misleading**: Matthew Honnibal, 3 Nov 2026. [[post]](https://honnibal.dev/blog/astra-read-write-misleading)
-  Points out that only the small networks (17K to 172K weights) were edited from raw weights alone. The Qwen result used Python and up to 50 passes over practice problems.
-- *Is the Qwen result a capability or a bug fix?* Several write-ups note that the edit removes a thinking-loop direction, so it repairs a known failure rather than adding math ability. Runs with 10 or 25 passes barely moved MATH-500.
-
----
-
-## Explainers & Press
-
-- [DataCamp: Weight-Space Programming: How LLMs Read and Edit Neural Network Weights](https://www.datacamp.com/blog/weight-space-programming)
-- [Snowflake: Fixing a neural network by having an LLM edit its weights](https://www.snowflake.com/en/developers/blog/editing-neural-network-weights-with-an-llm/)
-- [The Register: Forget retraining, AI can now tweak another AI's weights](https://www.theregister.com/a/5307105)
-- [AI Wiki: Weight-Space Programming](https://aiwiki.ai/wiki/weight_space_programming)
-- [Envisioning: Weight-Space Programming (vocabulary)](https://envisioning.com/vocab/weight-space-programming)
-
----
-
-## Foundations & Related Fields
-
-WSP builds on several older ideas. The papers below are good background reading.
-
-**Weight-space learning (networks as data)**
-- **A Survey of Weight Space Learning: Understanding, Representation, and Generation**: Han, Wang et al., 2026. [[arXiv 2603.10090]](https://arxiv.org/abs/2603.10090)
-- **Equivariant Architectures for Learning in Deep Weight Spaces (DWSNets)**: Navon et al., ICML 2023. [[arXiv 2301.12780]](https://arxiv.org/abs/2301.12780) [[code]](https://github.com/AvivNavon/DWSNets)
-- **Permutation Equivariant Neural Functionals**: Zhou et al., NeurIPS 2023. [[arXiv 2302.14040]](https://arxiv.org/abs/2302.14040)
-- **Learning to Learn with Generative Models of Neural Network Checkpoints (G.pt)**: Peebles et al., 2022. [[arXiv 2209.12892]](https://arxiv.org/abs/2209.12892)
-- **HyperNetworks**: Ha, Dai, Le, 2016. [[arXiv 1609.09106]](https://arxiv.org/abs/1609.09106)
-- **End-to-End Synthesis of Neural Programs in Weight Space**: Li, Xu, Khalil, Sanner, ICLR 2025. [[page]](https://iclr.cc/virtual/2025/33060)
-- ICLR 2025 Workshop on Weight Space Learning. [[site]](https://weight-space-learning.github.io/)
-
-**Hand-written / compiled networks**
-- **Thinking Like Transformers (RASP)**: Weiss, Goldberg, Yahav, ICML 2021. [[arXiv 2106.06981]](https://arxiv.org/abs/2106.06981)
-- **Tracr: Compiled Transformers as a Laboratory for Interpretability**: Lindner et al., 2023. [[arXiv 2301.05062]](https://arxiv.org/abs/2301.05062)
-- **Linear Transformers Are Secretly Fast Weight Programmers**: Schlag, Irie, Schmidhuber, ICML 2021. [[arXiv 2102.11174]](https://arxiv.org/abs/2102.11174)
-- **Software 2.0**: Andrej Karpathy, 2017. [[essay]](https://karpathy.medium.com/software-2-0-a64152b37c35)
-
-**Direct weight editing**
-- **Locating and Editing Factual Associations in GPT (ROME)**: Meng et al., NeurIPS 2022. [[arXiv 2202.05262]](https://arxiv.org/abs/2202.05262)
-- **Editing Models with Task Arithmetic**: Ilharco et al., ICLR 2023. [[arXiv 2212.04089]](https://arxiv.org/abs/2212.04089)
-- **Refusal in Language Models Is Mediated by a Single Direction**: Arditi et al., 2024. [[arXiv 2406.11717]](https://arxiv.org/abs/2406.11717)
-
-**Other awesome lists**
-- [Zehong-Wang/Awesome-Weight-Space-Learning](https://github.com/Zehong-Wang/Awesome-Weight-Space-Learning)
-- [ege-erdogan/awesome-weight-space-learning](https://github.com/ege-erdogan/awesome-weight-space-learning)
-
----
-
-## Open Problems
-
-The questions below come up repeatedly across the papers and critiques. Each could anchor a project.
-
-1. **Reading vs. search.** When an edit improves a benchmark, did the LLM *understand* the weights, or did it find the edit by trial and error with feedback? How to report budgets (passes, tool calls, tokens) in a comparable way is still an open question.
-2. **Scale.** Edits made from raw weights alone have only been shown on networks with tens of thousands of parameters. LLM-scale results so far depend on code, activations and evaluation loops.
-3. **Repair vs. capability.** Many successes fix one localized fault. Can WSP *add* knowledge or skills that are spread across many weights?
-4. **Distributed behaviours.** Properties such as sycophancy did not show up in the weights alone. What should the editor be shown to detect them (activations, attention, SAE features)?
-5. **Verification.** Model checking, interpretable-by-construction edits and held-out evaluation are early approaches to trusting a written network.
-6. **Safety.** LLMs that can edit weights, possibly including their own, raise new questions about oversight and tamper detection.
-
----
+<sub>Op. = dominant operation: R = read/audit, W = write from scratch, E = edit/repair. Sorted by arXiv ID. Last updated 25 Nov 2026.</sub>
 
 ## Contributing
+Pull requests are welcome. To add an entry, include:
+1. a link to the paper, post, or repository;
+2. a one-line description of what the LLM reads, writes, or edits, and the headline result as the authors state it;
+3. code or project links where available.
 
-Contributions are very welcome. The field is only weeks old and new preprints appear every few days. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
-
-## License
-
-[![CC0](https://licensebuttons.net/p/zero/1.0/88x31.png)](https://creativecommons.org/publicdomain/zero/1.0/)
-
-To the extent possible under law, the contributors have waived all copyright and related rights to this work.
+An entry fits this list if a **general-purpose LLM** decides what to change in a network's weights. Work where a *trained* weight generator or a fixed algorithm does that belongs under [Background](#background-related-lines-of-work).
