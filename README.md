@@ -22,7 +22,7 @@ Whether you are an **AI researcher, machine learning engineer, developer, gradua
 
 ## Start Here
 
-- 📖 [Foundational Work: Sparks of Weight-Space Programming](https://rikiyat.github.io/blog/weight-space-programming/)
+- 📖 [Foundational Work: Sparks of Weight-Space Programming](#foundational-work)
 - 📚 [Research Papers and Surveys](#surveys)
 - 🧪 [Benchmarks and Evaluations](#benchmarks--evaluation)
 - 💻 [Open-Source Implementations](#replications--reproductions)
