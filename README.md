@@ -20,6 +20,18 @@ This repository tracks the rapidly emerging WSP research ecosystem, from its int
 
 Whether you are an **AI researcher, machine learning engineer, developer, graduate student, or someone exploring LLM-based neural network programming**, this collection is intended to help you discover relevant research and reproduce experiments.
 
+
+## Featured Publication
+
+📖 **[Weight-Space Programming: A Scoping Review of an Emerging Paradigm for Gradient-Free Neural Network Synthesis, Editing, and Auditing](https://doi.org/10.5281/zenodo.24578746)**
+
+An early-stage scoping review of the emerging WSP research landscape, examining its capabilities, limitations, research taxonomy, and open challenges.
+
+**[📄 Read the Paper (PDF)](https://zenodo.org/records/24578746)** · **[🔗 DOI: 10.5281/zenodo.24578746](https://doi.org/10.5281/zenodo.24578746)**
+
+---
+
+
 ## Start Here
 
 - 📖 [Foundational Work: Sparks of Weight-Space Programming](#foundational-work)
@@ -68,7 +80,11 @@ This collection distinguishes direct WSP research from related historical approa
 ---
 
 ## Surveys
-- **Weight-Space Programming: An Early Review of an Emerging Paradigm for Gradient-Free Neural Network Synthesis, Editing, and Auditing**: *Shahzeb Khoso (NUST)*, Nov 2026. A scoping review of the first 15 arXiv studies, covering a read/write/edit taxonomy, a quality appraisal, cross-cutting findings, and open problems. *(Preprint link coming soon.)*
+
+- **[Weight-Space Programming: A Scoping Review of an Emerging Paradigm for Gradient-Free Neural Network Synthesis, Editing, and Auditing](https://doi.org/10.5281/zenodo.24578746)**: *Shahzeb Khoso (NUST)*, 27 Nov 2026. An early-stage scoping review of 15 primary arXiv studies, covering a read/write/edit taxonomy, qualitative study appraisal, cross-cutting findings, and open research challenges. Published as a preprint on Zenodo.
+
+  **[📄 Read the paper (PDF)](https://zenodo.org/records/24578746)** · **[🔗 DOI: 10.5281/zenodo.24578746](https://doi.org/10.5281/zenodo.24578746)**
+
 
 ## Foundational Work
 - **[Sparks of Weight-Space Programming: LLMs can natively read & write neural network weights](https://rikiyat.github.io/blog/weight-space-programming/)**: *Rikiya Takehi, Jayden Teoh, Alex Zhang, Omar Khattab (MIT CSAIL)*, 2 Nov 2026. The essay that named the field. GPT-6 Astra reads, edits, and writes weights. Editing could unmask a hidden ability but not add a missing one. A "Response to Comments" section was added on 12 Nov. [[💻 logs](https://github.com/RikiyaT/lm_understand-logs)] [[🤗 edited model](https://huggingface.co/RikiyaT/Qwen3.5-0.8B-weight-space-programming)] [[demo](https://huggingface.co/spaces/akhaliq/weight-space-programming-demo)]
